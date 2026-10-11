@@ -55,8 +55,8 @@ This repository provides a reference implementation of a **LangGraph ReAct Agent
 
 ```bash
 # Clone the repository
-git clone https://github.com/machhakiran/KaviAgent.git
-cd KaviAgent
+git clone https://github.com/machhakiran/agent-ops-series.git
+cd agent-ops-series
 
 # Initialize environment configuration
 make init
@@ -275,7 +275,8 @@ make test-auth-integration # Run auth middleware integration tests
 
 **Machha Kiran**
 - GitHub: [@machhakiran](https://github.com/machhakiran)
-- Repository: [machhakiran/KaviAgent](https://github.com/machhakiran/KaviAgent)
+- Repository: [machhakiran/agent-ops-series](https://github.com/machhakiran/agent-ops-series)
+- Ecosystem: [machhakiran/KaviAgent](https://github.com/machhakiran/KaviAgent)
 
 ---
 
