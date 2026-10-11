@@ -63,14 +63,17 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     yield
 
     if mcp_client is not None:
-        await mcp_client.__aexit__(None, None, None)
+        try:
+            await mcp_client.__aexit__(None, None, None)
+        except Exception:
+            pass
     app.state.agent_graph = None
     app.state.mcp_client = None
 
 
 app = FastAPI(
-    title="LangGraph React Agent API",
-    description="FastAPI service for LangGraph React Agent with OpenAI-compatible chat completions API.",
+    title="Machha Kiran AI — LangGraph ReAct Agent API",
+    description="Production FastAPI service for LangGraph ReAct Agent with OpenAI-compatible chat completions API and MCP tool calling by Machha Kiran (@machhakiran).",
     lifespan=lifespan,
     openapi_tags=[
         {"name": "Chat", "description": "Chat completion operations"},
@@ -195,6 +198,7 @@ def _handle_stream(agent_graph, messages: list[HumanMessage], model_id: str) -> 
 
     async def event_generator() -> AsyncIterator[str]:
         try:
+            streamed_content = False
             async for event in agent_graph.astream_events(
                 {"messages": messages},
                 config={"recursion_limit": 10},
@@ -205,6 +209,7 @@ def _handle_stream(agent_graph, messages: list[HumanMessage], model_id: str) -> 
                 if kind == "on_chat_model_stream":
                     chunk = event["data"]["chunk"]
                     if chunk.content:
+                        streamed_content = True
                         yield _chunk({"content": chunk.content})
 
                 elif kind == "on_chat_model_end":
@@ -217,6 +222,9 @@ def _handle_stream(agent_graph, messages: list[HumanMessage], model_id: str) -> 
                                 for i, tc in enumerate(message.tool_calls)
                             ],
                         })
+                    elif getattr(message, "content", None) and not streamed_content:
+                        streamed_content = True
+                        yield _chunk({"content": message.content})
 
             yield _chunk({}, finish_reason="stop")
             yield "data: [DONE]\n\n"

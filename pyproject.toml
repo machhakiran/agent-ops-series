@@ -1,8 +1,8 @@
 [project]
 name = "react_agent"
 version = "0.1.0"
-description = "A template for a LangGraph LLM app deployable on RHOAI Cloud as an ai_service. This particular example focues on an AutoX chatbot enhanced with external tools (function calling)."
-authors = [{ name = "Your Name", email = "you@example.com" }]
+description = "Production-grade LangGraph ReAct Agent by Machha Kiran (@machhakiran) featuring local inference with Ollama/OGX, Model Context Protocol (MCP) tool integration, and enterprise deployment."
+authors = [{ name = "Machha Kiran", email = "machhakran@gmail.com" }]
 license = { text = "MIT" }
 requires-python = ">=3.12,<=3.14"
 dependencies = [

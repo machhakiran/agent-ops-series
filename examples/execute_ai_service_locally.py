@@ -11,11 +11,11 @@ from react_agent.tools import MCP_SERVER_CONFIG
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 QUESTIONS = (
-    "Fetch https://www.redhat.com/en/topics/ai/agentops and give me a 3-sentence summary of the AgentOps doc.",
+    "Fetch https://raw.githubusercontent.com/machhakiran/KaviAgent/main/README.md and give me a 3-sentence summary of KaviAgent.",
     "How many GPU-hours to fine-tune a 7B model at 40 TFLOPS on 10B tokens? Assume 6 FLOPs per token per parameter.",
     "Fetch https://raw.githubusercontent.com/spiffe/spiffe/main/README.md and explain in 2 sentences what problem SPIFFE solves.",
     "What is 2 ** 32 and what would that be in gigabytes?",
-    "Get the most recent commit to the repo with owner: vllm-project and repo: vllm",
+    "What is the first issue in the repo with owner: machhakiran and repo: KaviAgent?",
 )
 DEBUG_MODE = False
 

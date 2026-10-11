@@ -1,186 +1,186 @@
-# AgentOps Unlocked
+# Machha Kiran AI &bull; Production LangGraph ReAct Agent
 
-Companion repo for the **AgentOps Unlocked** video series.
+<div align="center">
 
-_"I built this on my laptop, I shipped it to production, I trust it in production."_
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
+[![LangGraph](https://img.shields.io/badge/framework-LangGraph-orange.svg)](https://langchain-ai.github.io/langgraph/)
+[![MCP](https://img.shields.io/badge/protocol-Model_Context_Protocol-purple.svg)](https://modelcontextprotocol.io/)
+[![Ollama](https://img.shields.io/badge/inference-Ollama_|_OGX-green.svg)](https://ollama.com/)
+[![FastAPI](https://img.shields.io/badge/server-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Author](https://img.shields.io/badge/Author-Machha_Kiran-red.svg)](https://github.com/machhakiran)
 
-This repo contains a LangGraph ReAct agent that evolves across the series. We start with a local prototype running on Ollama and end with a production-grade deployment on Kubernetes with sandboxing, identity, and observability.
+**A production-grade, local-first ReAct agent by [Machha Kiran](https://github.com/machhakiran) demonstrating the full lifecycle of agent engineering:**  
+*Harness &bull; ReAct Loop &bull; MCP Tool Integration &bull; Sandboxing &bull; Auth Gateway &bull; LLM-Ops*
 
----
+[Overview](#-overview) &bull;
+[Quickstart](#-quickstart) &bull;
+[Architecture](#-architecture) &bull;
+[MCP Tools](#-mcp--tools) &bull;
+[AgentOps & Deployment](#-agentops--production-deployment) &bull;
+[API Reference](#-api-reference) &bull;
+[Author](#-author)
 
-## Prerequisites
-
-- [uv](https://docs.astral.sh/uv/) - Python package manager
-- [GNU Make](https://www.gnu.org/software/make/) and a bash-compatible shell (Windows: use [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) or [Git Bash](https://git-scm.com/downloads))
-- [Ollama](https://ollama.com/) - local inference (Video 2)
-- [Podman](https://podman.io/) or [Docker](https://www.docker.com/) - container builds (Video 3+)
-- [Helm](https://helm.sh/) - Kubernetes deployment (Video 3+)
-- [oc CLI](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html) - OpenShift deployment (Video 3+)
-
----
-
-## Series Overview
-
-| # | Video | What You Build | Repo Content |
-|---|-------|---------------|--------------|
-| 1 | [Is Your AI Agent a Liability?](https://youtu.be/LJHn6a_z9e0) | - | No code (conceptual framing) |
-| 2 | [Run Local AI Agents for Free](https://youtu.be/i4A8jN41NNs?si=3A20z_qRYWUibSGb) | Working local agent | Agent code, Ollama/OGX setup, MCP tools |
-| 3 | [Deploy AI Agents on Kubernetes](#video-3----deploying-ai-agents-on-kubernetes-ollama-to-vllm) | Containerized agent on OpenShift | Dockerfile, Helm chart, deploy targets |
-| 4 | [Sandbox Your AI Agent](#video-4----sandbox-your-ai-agent-openshell) | Sandboxed agent with OpenShell | OpenShell Helm values |
-| 5 | [MCP Gateway Tool Authorization](#video-5----mcp-gateway-tool-authorization) | Identity-based tool authorization | MCP Gateway manifests |
-| 6 | [LLM Observability](#video-6----llm-observability-monitor-and-trace-ai-agents) | MLflow tracing | Tracing config |
+</div>
 
 ---
 
-## Video 1 - Is Your AI Agent a Liability?
+## 🌟 Overview
 
-This is the series opener. It walks through the evolution of the AI stack, from chat completions to autonomous agents, and establishes the production gap. Every subsequent video references this framing.
+Modern autonomous agents require more than just prompt engineering—they require robust loop mechanics, reliable tool protocols, bulletproof error handling, and end-to-end observability.
 
----
+This repository provides a reference implementation of a **LangGraph ReAct Agent** that transitions seamlessly from a local development sandbox into a hardened Kubernetes / OpenShift production deployment.
 
-## Video 2 - Run Local AI Agents for Free (Ollama + Qwen + MCP)
+### Key Pillars
 
-Build a working AI agent on your laptop using Ollama for local inference and MCP for tool connectivity.
-
-### Files
-
-| Path | Purpose |
-|------|---------|
-| `src/react_agent/agent.py` | LangGraph ReAct agent |
-| `src/react_agent/tools.py` | Calculator, fetch_page tools, MCP server config |
-| `main.py` | FastAPI app with OpenAI-compatible `/chat/completions` endpoint |
-| `run_ogx_server.yaml` | OGX local server config (Ollama provider) |
-| `playground/` | Browser-based chat UI |
-
-### Setup
-
-```bash
-make init                     # create .env from .env.example
-make env                      # create venv, install dependencies
-make ollama MODEL=qwen3:1.7b  # install Ollama, pull model
-```
-
-Edit `.env`:
-
-```ini
-BASE_URL=http://localhost:8321/v1
-MODEL_ID=ollama/qwen3:1.7b
-```
-
-> The `MODEL_ID` must use the `ollama/` prefix and match `ollama list` exactly.
-
-### Run
-
-```bash
-make ogx-server   # terminal 1 - keep open
-make run-app      # terminal 2 - agent at http://localhost:8000
-```
-
-### Test
-
-```bash
-curl -X POST http://localhost:8000/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{"messages": [{"role": "user", "content": "What is 2+2?"}], "stream": false}'
-```
+- 🧠 **Reason & Act Loop**: Built with LangGraph, managing state, recursion limits, and multi-turn tool execution.
+- 🔌 **Model Context Protocol (MCP)**: Native integration with MCP servers (e.g. GitHub MCP for issues, PRs, and repositories).
+- ⚡ **Local-First Inference**: Zero-cost, privacy-first local inference using **Ollama** (`qwen3:1.7b`) and **OGX**, plus pluggable cloud inference (vLLM, OpenAI, OpenShift).
+- 🛡️ **Fault-Tolerant Tool Execution**: Safe tool isolation preventing tool runtime failures from crashing the agent loop.
+- 🖥️ **Interactive Cockpit**: Real-time SSE streaming chat playground UI with live status indicator and suggestion prompts.
+- 📊 **Enterprise AgentOps**: OpenShell sandboxing, identity-based tool authorization via MCP Gateway, and MLflow distributed tracing.
 
 ---
 
-## Video 3 - Deploying AI Agents on Kubernetes: Ollama to vLLM
-
-This video uses the same agent, containerized and deployed to OpenShift. Inference moves from Ollama to vLLM for multi-user throughput. **The agent code does not change.**
-
-### Files
-
-| Path | Purpose |
-|------|---------|
-| `Dockerfile` | UBI9 Python 3.12 container image |
-| `deployment/` | Helm chart (`Chart.yaml`, `templates/`) |
-| `values.yaml` | Agent-specific Helm overrides |
-| `Makefile` | `build`, `push`, `deploy`, `dry-run`, `undeploy` targets |
-
-### Configure
-
-Edit `.env` for your cluster:
-
-```ini
-API_KEY=your-api-key
-BASE_URL=https://your-vllm-endpoint/v1
-MODEL_ID=Qwen3-8B-FP8-dynamic
-CONTAINER_IMAGE=quay.io/your-username/langgraph-react-agent:latest
-```
-
-### Build and Deploy
-
-```bash
-make build        # build container image (podman/docker)
-make push         # push to registry
-make deploy       # helm install to current namespace
-```
-
-Or build in-cluster without podman/docker:
-
-```bash
-make build-openshift
-```
-
-### Verify
-
-```bash
-oc get route langgraph-react-agent -o jsonpath='{.spec.host}'
-curl -k https://<route>/health
-```
-
----
-
-## Video 4 - Sandbox Your AI Agent: OpenShell
-
-Video 3 deployed the agent to OpenShift. Video 4 wraps it with sandbox policy—restricting file access, network egress, and system calls. Via [OpenShell](https://github.com/NVIDIA/OpenShell).
+## 🚀 Quickstart
 
 ### Prerequisites
 
-Install Red Hat Agent Sandbox Operator (cluster-wide, one-time):
+- [uv](https://docs.astral.sh/uv/) (recommended) or Python 3.12+
+- [GNU Make](https://www.gnu.org/software/make/)
+- [Ollama](https://ollama.com/) for local model execution
+- Node.js / `npx` (for GitHub MCP server)
+
+### 1. Installation
 
 ```bash
-# Create operator namespace and install via OLM
-oc apply -f - <<EOF
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: openshift-agent-sandbox-operator
-  labels:
-    openshift.io/cluster-monitoring: "true"
----
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
-  name: agent-sandbox-operatorgroup
-  namespace: openshift-agent-sandbox-operator
-spec:
-  targetNamespaces:
-  - openshift-agent-sandbox-operator
----
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: agent-sandbox-operator
-  namespace: openshift-agent-sandbox-operator
-spec:
-  channel: stable
-  installPlanApproval: Automatic
-  name: agent-sandbox-operator
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
-EOF
+# Clone the repository
+git clone https://github.com/machhakiran/KaviAgent.git
+cd KaviAgent
 
-# Verify operator is running
-oc -n openshift-agent-sandbox-operator get pods
+# Initialize environment configuration
+make init
+
+# Create virtualenv and install dependencies
+make env
 ```
 
-See [openshell/SETUP.md](openshell/SETUP.md) for OpenShift namespace and SCC setup.
+### 2. Configure Environment
 
-### Deploy
+Edit your `.env` file:
 
+```ini
+# Local Inference (OGX + Ollama)
+API_KEY=not-needed-for-local-development
+BASE_URL=http://localhost:8321/v1
+MODEL_ID=ollama/qwen3:1.7b
+
+# Tools (optional but recommended)
+FIRECRAWL_API_KEY=your-firecrawl-key
+GITHUB_TOKEN=your-github-personal-access-token
+```
+
+### 3. Start Inference & App
+
+In **Terminal 1** — Start Ollama & OGX Server:
+```bash
+make ollama MODEL=qwen3:1.7b    # Pulls model and starts Ollama
+make ogx-server                 # Starts OGX server on port 8321
+```
+
+In **Terminal 2** — Start the Agent API & UI:
+```bash
+make run-app-fresh              # Starts FastAPI server on port 8000
+```
+
+Open your browser at **[http://localhost:8000](http://localhost:8000)** to launch the interactive cockpit.
+
+---
+
+## 🏗️ Architecture
+
+```
++-------------------------------------------------------------------------+
+|                           User / Playground UI                          |
+|                  (Browser Cockpit · SSE Streaming)                      |
++------------------------------------+------------------------------------+
+                                     |
+                                     v
++-------------------------------------------------------------------------+
+|                     FastAPI Agent Service (main.py)                     |
+|                 /chat/completions (OpenAI Compatible)                   |
++------------------------------------+------------------------------------+
+                                     |
+                                     v
++-------------------------------------------------------------------------+
+|                  LangGraph ReAct Agent (react_agent)                    |
+|                                                                         |
+|   +-----------------------+              +--------------------------+   |
+|   |                       |  Tool Calls  |                          |   |
+|   |     LLM (ChatOpenAI)  | -----------> |        Tool Node         |   |
+|   |      (Qwen3 / vLLM)   | <----------- |     (Safe Execution)     |   |
+|   |                       |   Results    |                          |   |
+|   +-----------------------+              +--------------------------+   |
++-------------------+------------------------------------+----------------+
+                    |                                    |
+                    v                                    v
++-----------------------------------+  +----------------------------------+
+|          Inference Layer          |  |         External Tools           |
+|  - Ollama (qwen3:1.7b)            |  |  - GitHub MCP Server (npx)       |
+|  - OGX Server (Port 8321)         |  |  - Firecrawl Web Scraper         |
+|  - vLLM (Cloud / OpenShift)       |  |  - AST Math Calculator           |
++-----------------------------------+  +----------------------------------+
+```
+
+---
+
+## 🛠️ MCP & Tools
+
+The agent leverages external tools through function calling and the Model Context Protocol:
+
+| Tool | Source | Description |
+| :--- | :--- | :--- |
+| `calculator` | Native AST | Safe arithmetic and math evaluation without `eval()` |
+| `fetch_page` | Firecrawl API | Clean Markdown web scraping fit for LLM context |
+| `get_issue` | GitHub MCP | Fetch issue details by owner, repo, and issue number |
+| `list_issues` | GitHub MCP | Query and filter open/closed issues in a repository |
+| `create_issue` | GitHub MCP | Programmatically create GitHub issues with labels/body |
+
+### MCP Server Configuration
+
+Located in `src/react_agent/tools.py`:
+```python
+MCP_SERVER_CONFIG = {
+    "github": {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-github"],
+        "transport": "stdio",
+        "env": {**os.environ, "GITHUB_PERSONAL_ACCESS_TOKEN": os.getenv("GITHUB_TOKEN", "")},
+    },
+}
+```
+
+---
+
+## 🛡️ AgentOps & Production Deployment
+
+### 1. Containerization
+Build container images using Docker or Podman:
+```bash
+make build       # Build container image
+make push        # Push to container registry (Quay/DockerHub/GHCR)
+```
+
+### 2. Kubernetes / OpenShift Helm Deployment
+Deploy the agent to a cluster using Helm:
+```bash
+make dry-run     # Inspect rendered Helm manifests
+make deploy      # Install or upgrade Helm release
+make undeploy    # Clean up deployment from cluster
+```
+
+### 3. OpenShell Sandboxing
+Enforce strict security boundaries (filesystem restriction, network egress whitelisting, process sandboxing) with NVIDIA OpenShell:
 ```bash
 helm install openshell oci://ghcr.io/nvidia/openshell/helm-chart \
   --version 0.1.0 \
@@ -188,157 +188,97 @@ helm install openshell oci://ghcr.io/nvidia/openshell/helm-chart \
   -f openshell/values.yaml
 ```
 
-### Verify
+### 4. Kuadrant MCP Gateway Authorization
+Govern tool usage at the gateway level. Enforce fine-grained token identity policies (e.g. read-only vs. read-write access to GitHub MCP servers). See `deployment/mcp_gateway/` for manifests.
 
-```bash
-oc rollout status statefulset/openshell -n openshell
-oc port-forward -n openshell svc/openshell 8080:8080 &
-openshell gateway add http://127.0.0.1:8080 --local --name openshift
-```
-
-### Files
-
-| Path | Purpose |
-|------|---------|
-| `openshell/SETUP.md` | Prerequisites, detailed walkthrough, troubleshooting |
-| `openshell/values.yaml` | Sandbox policy (filesystem, network, process, inference) |
-
----
-
-## Video 5 - MCP Gateway Tool Authorization
-
-In this video we deploy an MCP Gateway (Kuadrant-based) that sits in front of tool servers and authorizes each tool call against the caller's identity. A "readonly" key can call `github_issue_read` but is denied on `github_issue_write`; a "readwrite" key can call both.
-
-### Files
-
-| Path | Purpose |
-|------|---------|
-| `deployment/mcp_gateway/kuadrant-operator.yaml` | Kuadrant operator + CatalogSource |
-| `deployment/mcp_gateway/kuadrant-cr.yaml` | Activate Kuadrant |
-| `deployment/mcp_gateway/gateway.yaml` | Gateway + ReferenceGrant |
-| `deployment/mcp_gateway/mcp-gateway-values.yaml` | MCP Gateway Helm values |
-| `deployment/mcp_gateway/reference-grant.yaml` | ReferenceGrant for MCPGatewayExtension |
-| `deployment/mcp_gateway/agent-authpolicy.yaml` | Tool-level AuthPolicy (readonly vs readwrite) |
-| `deployment/mcp_gateway/agent-identities.yaml` | Demo API key secrets |
-| `deployment/github-mcp-server.yaml` | GitHub MCP server Deployment + Service |
-| `deployment/github-mcp-registration.yaml` | HTTPRoute + MCPServerRegistration |
-
-### Deploy (MCP Gateway)
-
-```bash
-# 1. Kuadrant
-oc apply -f deployment/mcp_gateway/kuadrant-operator.yaml
-# wait for all 4 CSVs to be Succeeded:
-oc get csv -n kuadrant-system -w
-
-# 2. Kuadrant CR
-oc apply -f deployment/mcp_gateway/kuadrant-cr.yaml
-oc wait kuadrant/kuadrant -n kuadrant-system --for=condition=Ready --timeout=300s
-
-# 4. GatewayClass — triggers auto-provisioning of Istio in openshift-ingress
-oc apply -f deployment/mcp_gateway/gatewayclass.yaml
-
-# wait for the auto-installed Istio to be ready:
-oc get istio -n openshift-ingress -w
-
-# 5. Gateway
-oc apply -f deployment/mcp_gateway/gateway.yaml
-
-# wait for the auto-provisioned gateway deployment:
-oc get deployment -n openshift-ingress -w
-
-# 6. ReferenceGrant + MCP Gateway
-oc apply -f deployment/mcp_gateway/reference-grant.yaml
-
-export MCP_GATEWAY_VERSION=0.7.1
-kubectl apply -k "https://github.com/kuadrant/mcp-gateway/config/crd?ref=v${MCP_GATEWAY_VERSION}"
-helm upgrade -i mcp-gateway oci://ghcr.io/kuadrant/charts/mcp-gateway \
-  --version ${MCP_GATEWAY_VERSION} \
-  -f deployment/mcp_gateway/mcp-gateway-values.yaml \
-  -n mcp-system --create-namespace
-
-# 7. Register GitHub MCP server
-oc create secret generic github-mcp-token \
-  --from-literal=GITHUB_TOKEN=<your-token> -n mcp-system
-oc apply -f deployment/github-mcp-server.yaml
-oc apply -f deployment/github-mcp-registration.yaml
-
-# 8. Authorization policy + demo identities 
-oc apply -f deployment/mcp_gateway/agent-authpolicy.yaml
-# edit agent-identities.yaml with real API keys first
-oc apply -f deployment/mcp_gateway/agent-identities.yaml
-```
-
----
-
-## Video 6 - LLM Observability: Monitor and Trace AI Agents
-
-This video demos MLflow Tracing capturing every prompt, reasoning step, tool invocation, and token cost.
-
-### Files
-
-| Path | Purpose |
-|------|---------|
-| `src/react_agent/tracing.py` | MLflow tracing setup |
-| `.env.example` | MLflow config (local and OpenShift sections) |
-
-### Enable Tracing
-
-Add to `.env`:
-
-```ini
-MLFLOW_TRACKING_URI="http://localhost:5000"
-MLFLOW_EXPERIMENT_NAME="langgraph-react-agent"
-```
-
-Start MLflow:
-
+### 5. LLM Observability & Tracing
+Integrate with MLflow Tracing to record inputs, intermediate tool executions, latency, and token consumption:
 ```bash
 uv run --extra tracing mlflow server --port 5000
 ```
-
-For OpenShift (in-pod with K8s service account auth):
-
+Enable in `.env`:
 ```ini
-MLFLOW_TRACKING_URI=https://mlflow.redhat-ods-applications.svc:8443/mlflow
-MLFLOW_EXPERIMENT_NAME=langgraph-react-agent
-MLFLOW_TRACKING_AUTH=kubernetes-namespaced
-MLFLOW_TRACKING_SERVER_CERT_PATH=/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
+MLFLOW_TRACKING_URI="http://localhost:5000"
+MLFLOW_EXPERIMENT_NAME="machhakiran-react-agent"
 ```
 
-Tracing is optional. If `MLFLOW_TRACKING_URI` is not set, the agent runs without it.
-
 ---
 
-## API Reference
+## 📡 API Reference
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/chat/completions` | POST | OpenAI-compatible chat (supports `stream: true`) |
-| `/health` | GET | Service health check |
-| `/` | GET | Playground chat UI (disabled when auth is enabled) |
+The service exposes an OpenAI-compatible HTTP interface:
 
----
-
-## Tests
+### Chat Completions (`POST /chat/completions`)
 
 ```bash
-make test                  # unit tests
-make test-integration      # deployment integration tests
-make test-auth-integration # auth integration tests
+curl -X POST http://localhost:8000/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [
+      {"role": "user", "content": "What is issue 1 in machhakiran/KaviAgent?"}
+    ],
+    "stream": true
+  }'
+```
+
+### Health Check (`GET /health`)
+
+```bash
+curl http://localhost:8000/health
+```
+```json
+{
+  "status": "healthy",
+  "agent_initialized": true
+}
 ```
 
 ---
 
-## Resources
+## 🧪 Testing
 
-- [LangGraph](https://langchain-ai.github.io/langgraph/)
-- [LangChain](https://python.langchain.com/)
-- [OGX](https://ogx-ai.github.io/docs/)
-- [Ollama](https://ollama.com/docs)
-- [MCP Gateway](https://github.com/Kuadrant/mcp-gateway)
-- [OpenShell](https://github.com/NVIDIA/OpenShell)
+```bash
+make test                  # Run unit tests
+make test-integration      # Run deployment integration tests
+make test-auth-integration # Run auth middleware integration tests
+```
 
-## License
+---
 
-See [LICENSE](LICENSE).
+## 📂 Repository Layout
+
+```
+├── main.py                     # FastAPI server & SSE streaming engine
+├── agent.yaml                  # Agent deployment metadata specification
+├── Makefile                    # Automation commands (setup, run, deploy, test)
+├── pyproject.toml              # Python package metadata & dependencies
+├── run_ogx_server.yaml         # OGX local inference server configuration
+├── src/
+│   └── react_agent/
+│       ├── agent.py            # LangGraph ReAct agent loop & safe tool runner
+│       ├── tools.py            # Native tools & MCP server configuration
+│       └── tracing.py          # MLflow observability & telemetry
+├── playground/
+│   └── templates/
+│       └── index.html          # Interactive chat cockpit UI
+├── images/
+│   ├── machhakiran_logo.svg    # Machha Kiran brand logo
+│   └── langgraph_logo.svg      # LangGraph logo
+├── deployment/                 # Helm charts and OpenShift manifests
+├── openshell/                  # Sandbox policy configurations
+└── tests/                      # Unit & integration test suites
+```
+
+---
+
+## 👤 Author
+
+**Machha Kiran**
+- GitHub: [@machhakiran](https://github.com/machhakiran)
+- Repository: [machhakiran/KaviAgent](https://github.com/machhakiran/KaviAgent)
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).

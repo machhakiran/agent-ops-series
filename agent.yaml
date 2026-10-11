@@ -1,7 +1,7 @@
 name: langgraph-react-agent
-displayName: "LangGraph ReAct Agent"
+displayName: "Machha Kiran — LangGraph ReAct Agent"
 framework: langgraph
-description: "General-purpose ReAct agent built with LangGraph using a reason-and-act loop with external tools."
+description: "Production ReAct agent with LangGraph, MCP tools (GitHub, Fetch, Calculator), and local/cloud inference by Machha Kiran (@machhakiran)."
 env:
   required:
     - API_KEY
