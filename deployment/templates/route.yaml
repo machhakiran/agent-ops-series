@@ -3,6 +3,8 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: {{ include "agent.fullname" . }}
+  annotations:
+    haproxy.router.openshift.io/timeout: 300s
   labels:
     {{- include "agent.labels" . | nindent 4 }}
 spec:
